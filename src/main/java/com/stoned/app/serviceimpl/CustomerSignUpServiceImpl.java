@@ -81,7 +81,7 @@ public class CustomerSignUpServiceImpl  implements SignUpService{
 			}
 			else
 			{
-				throw new PasswordMisMatchException("Email/Password or Mobile Number mismatched");
+				throw new PasswordMisMatchException("Email/Password mismatched");
 			}
 		}
 		else

@@ -46,5 +46,11 @@ public class MainExceptionHandler {
 		
 		return mn.getMessage();
 	}
+	
+	@ExceptionHandler(StoryAlreadyExistException.class)
+	public String StoryAlreadyExistException(StoryAlreadyExistException ex)
+	{
+		return ex.getMessage();
+	}
 
 }

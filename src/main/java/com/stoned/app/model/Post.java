@@ -1,0 +1,48 @@
+package com.stoned.app.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "post")
+@Builder
+public class Post {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private Integer id;
+	
+	/*@NotNull
+    @Embedded
+	@AttributeOverrides({
+		@AttributeOverride(name="id",column = @Column(name = "user_id")),
+		@AttributeOverride(name ="email",column = @Column(name="userEmail")),
+	})
+	private UserDto userDto;*/
+	
+	private String userName;
+	private String name;
+	//private byte[] userImage;
+	private String userEmail;
+	private Integer userId;
+	
+	@NotNull
+	@Column(columnDefinition = "longblob")
+	private byte[] image;
+	private String type;
+	private String captions;
+	
+	private String timestamp;
+}
