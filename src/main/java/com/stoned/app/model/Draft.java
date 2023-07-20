@@ -16,9 +16,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "post")
+@Table(name = "draft")
 @Builder
-public class Post {
+public class Draft {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

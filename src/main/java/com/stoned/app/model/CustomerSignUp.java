@@ -1,6 +1,7 @@
 package com.stoned.app.model;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -21,7 +22,6 @@ public class CustomerSignUp {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Integer id;
 	
-	
 	private String firstname;
 	
 	private String lastname;
@@ -37,5 +37,8 @@ public class CustomerSignUp {
 	private String mobileNumber;
 	
 	private String password;
+	
+	@Column(columnDefinition = "longblob")
+	private byte[] userImage;
 
 }

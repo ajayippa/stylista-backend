@@ -12,7 +12,9 @@ import com.stoned.app.model.Story;
 
 public interface StoryService {
 	
-	public String uploadStory(MultipartFile file,String caption,String userEmail) throws IOException, StoryAlreadyExistException;
+	String uploadStory(MultipartFile file,String userEmail) throws IOException, StoryAlreadyExistException;
+	
+	String uploadTextStory(String caption,String userEmail) throws StoryAlreadyExistException;
 	
 	Story getStoryByUserEmail(String email);
 	

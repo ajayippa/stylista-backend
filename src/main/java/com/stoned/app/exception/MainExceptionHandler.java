@@ -52,5 +52,11 @@ public class MainExceptionHandler {
 	{
 		return ex.getMessage();
 	}
+	
+	@ExceptionHandler(StoryNotFoundException.class)
+	public String StoryNotFoundException(StoryNotFoundException ex)
+	{
+		return ex.getMessage();
+	}
 
 }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,10 +30,20 @@ public class StoryController {
 	@Autowired
 	private StoryService service;
 	
-	@PostMapping("/createStory/{userEmail}")
-	public ResponseEntity<?> CreateStory(@RequestPart("image")MultipartFile file ,@RequestPart("caption") String caption,@PathVariable String userEmail) throws IOException, StoryAlreadyExistException{
+	@PostMapping("/createImageStory/{userEmail}")
+	public ResponseEntity<?> CreateStory(@RequestParam(value="image", required = false)MultipartFile file ,@PathVariable String userEmail) throws IOException, StoryAlreadyExistException{
 		
-		String data=service.uploadStory(file,caption,userEmail);
+		String data=service.uploadStory(file,userEmail);
+		
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(data);
+	}
+	
+	@PostMapping("/createTextStory/{userEmail}")
+	public ResponseEntity<?> createTextStory(@RequestParam("caption")String caption,@PathVariable String userEmail) throws StoryAlreadyExistException{
+		
+		String data=service.uploadTextStory(caption, userEmail);
+		
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(data);
 	}
@@ -62,10 +72,12 @@ public class StoryController {
 		return new ResponseEntity<String>(service.deleteStoryByUserId(email),HttpStatus.OK);
 	}
 	
-	 @Scheduled(cron = "0 * * * * *") // Run every minute
-	    public void cleanupExpiredStories() {
-	         service.getStoriesOlderThan24Hours();
+	@Scheduled(cron = "0 * * * * *") // Run every minute
+	public void cleanupExpiredStories() {
+		service.getStoriesOlderThan24Hours();
 	        
-	    }
+	}
 	
+	
+
 }

@@ -10,12 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.stoned.app.service.EmailService;
 
-
-
-
 @Service
 public class EmailServiceImplementation implements EmailService{
 
+    
+    
 	@Autowired
     private JavaMailSender javaMailSender;
 
@@ -25,15 +24,25 @@ public class EmailServiceImplementation implements EmailService{
     
     public String emailVerfication(String email) {
     	
+    	 
+    	
+    	//if (isOtpExpired(session) || getOtp(session) == null) {
     	SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(sender);
         mailMessage.setTo(email);
         mailMessage.setSubject("Email Verfication");
         Random random = new Random();
-        int res=random.nextInt(9000) + 1000;
+        Integer res=random.nextInt(9000) + 1000;
+        System.out.println(res);        
         String randomValue=String.valueOf(res);
         mailMessage.setText(randomValue);
         javaMailSender.send(mailMessage);
-        return randomValue;
+        
+        return "randomValue";
+    	//}
+    	//return "fail";
     }
+
+
+    
 }

@@ -4,6 +4,7 @@ package com.stoned.app.serviceimpl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.stoned.app.dto.CustomerData;
@@ -13,11 +14,15 @@ import com.stoned.app.exception.*;
 import com.stoned.app.model.CustomerSignUp;
 import com.stoned.app.repository.CustomerSignupRepo;
 import com.stoned.app.service.SignUpService;
+
 @Service
 public class CustomerSignUpServiceImpl  implements SignUpService{
 	
 	 @Autowired
-	    private CustomerSignupRepo cRepo;
+	 private CustomerSignupRepo cRepo;
+	 
+	 @Autowired
+	 private PasswordEncoder passwordEncoder;
 
 	@Override
 	public String saveDetails(CustomerData signup) {
@@ -43,8 +48,8 @@ public class CustomerSignUpServiceImpl  implements SignUpService{
 			}
 			else {
 				CustomerSignUp data=CustomerSignUp.build(0,signup.getFirstname(),
-						signup.getLastname(), signup.getUsername(), signup.getDate(), signup.getGender(),
-							signup.getEmail(), signup.getMobileNumber(), signup.getPassword());
+						signup.getLastname(), signup.getUsername(), signup.getDateOfBirth(), signup.getGender(),
+							signup.getEmail(), signup.getMobileNumber(), passwordEncoder.encode(signup.getPassword()),null);
 		
 				cRepo.save(data);
 			}
@@ -112,5 +117,7 @@ public class CustomerSignUpServiceImpl  implements SignUpService{
 			return "success";
 		}
 	}
+	
+	
 	
 }

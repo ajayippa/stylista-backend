@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 public class CustomerData {
 	
 
-	
     @NotBlank(message = "firstname should not be empty")
 	private String firstname;
     @NotBlank(message = "lastname should not be empty")
@@ -22,7 +21,7 @@ public class CustomerData {
     @NotBlank(message = "UserName should not be empty")
 	private String username;
     @NotBlank(message = "date of birth should not be empty")
-	private String date;
+	private String dateOfBirth;
     @NotBlank(message = "gender should not be empty")
 	private String gender;
     @Email(message = "email should not be empty")

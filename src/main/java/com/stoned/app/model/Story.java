@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +33,8 @@ public class Story {
 	
 	private String userName;
 	private String name;
-	//private byte[] userImage;
+	@Column(columnDefinition = "longblob")
+	private byte[] userImage;
 	private String userEmail;
 	private Integer userId;
 	

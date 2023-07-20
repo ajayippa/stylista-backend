@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stoned.app.model.CustomerSignUp;
+import com.stoned.app.model.Draft;
 import com.stoned.app.model.Post;
 import com.stoned.app.repository.CustomerSignupRepo;
+import com.stoned.app.repository.DraftRepository;
 import com.stoned.app.repository.PostRepository;
 import com.stoned.app.service.PostService;
 import com.stoned.app.util.ImageUtils;
@@ -24,6 +26,9 @@ public class PostServiceImplementation implements PostService{
 	@Autowired
 	private CustomerSignupRepo customerRepo;
 	
+	@Autowired
+	private DraftRepository draftRepository;
+	
 	public String uploadPost(MultipartFile file,String caption,String userEmail) throws IOException{
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		CustomerSignUp customerData=customerRepo.findByEmail(userEmail);
@@ -34,11 +39,12 @@ public class PostServiceImplementation implements PostService{
 				.name(customerData.getFirstname())
 				.userEmail(userEmail)
 				.userId(customerData.getId())
+				.userImage(customerData.getUserImage())
 				.captions(caption)
 				.timestamp(currentDateTime.toString())
 				.image(ImageUtils.compressImage(file.getBytes())).build());
 		if(data!=null) {
-			return "file uploaded successfully";
+			return "success";
 		}
 		
 		return null;
@@ -55,6 +61,41 @@ public class PostServiceImplementation implements PostService{
         }
 		
 		return allPost;
+	}
+	
+	
+	public String uploadDraft(MultipartFile file,String caption,String userEmail) throws IOException{
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		CustomerSignUp customerData=customerRepo.findByEmail(userEmail);
+		
+		Draft data=draftRepository.save(Draft.builder()
+				.type(file.getContentType())
+				.userName(customerData.getUsername())
+				.name(customerData.getFirstname())
+				.userEmail(userEmail)
+				.userId(customerData.getId())
+				.userImage(customerData.getUserImage())
+				.captions(caption)
+				.timestamp(currentDateTime.toString())
+				.image(ImageUtils.compressImage(file.getBytes())).build());
+		if(data!=null) {
+			return "success";
+		}
+		
+		return null;
+	}
+	
+	
+	public List<Draft> getAllUserDrafts(String userEmail) {
+		List<Draft> allDraft =draftRepository.findByUserEmail(userEmail);
+		
+		for (Draft draft : allDraft) {
+            byte[] compressedImage = draft.getImage();
+            byte[] decompressedImage = ImageUtils.decompressImage(compressedImage);
+            draft.setImage(decompressedImage);
+        }
+		
+		return allDraft;
 	}
 
 }

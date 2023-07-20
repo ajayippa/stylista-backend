@@ -9,12 +9,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.stoned.app.exception.StoryAlreadyExistException;
+import com.stoned.app.exception.StoryNotFoundException;
 import com.stoned.app.model.CustomerSignUp;
 import com.stoned.app.model.Story;
 import com.stoned.app.repository.CustomerSignupRepo;
 import com.stoned.app.repository.StoryRepository;
 import com.stoned.app.service.StoryService;
 import com.stoned.app.util.ImageUtils;
+
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class StoryServiceImplementation implements StoryService{
@@ -25,25 +28,34 @@ public class StoryServiceImplementation implements StoryService{
 	@Autowired
 	private CustomerSignupRepo customerRepo;
 	
-	public String uploadStory(MultipartFile file,String caption,String userEmail) throws IOException, StoryAlreadyExistException{
+	@Autowired
+	private HttpSession session;
+	
+	public String uploadStory(MultipartFile file,String userEmail) throws IOException, StoryAlreadyExistException{
 		Story res=storyRepository.findByUserEmail(userEmail);
 		if(res==null)
 		{
-		LocalDateTime currentDateTime = LocalDateTime.now();
-		CustomerSignUp customerData=customerRepo.findByEmail(userEmail);
+			LocalDateTime currentDateTime = LocalDateTime.now();
+			CustomerSignUp customerData=customerRepo.findByEmail(userEmail);
 		
-		Story data=storyRepository.save(Story.builder()
+			Story data=storyRepository.save(Story.builder()
 				.type(file.getContentType())
 				.userName(customerData.getUsername())
 				.name(customerData.getFirstname())
+				.userImage(customerData.getUserImage())
 				.userEmail(userEmail)
 				.userId(customerData.getId())
-				.captions(caption)
+				.captions(null)
 				.timestamp(currentDateTime.toString())
 				.image(ImageUtils.compressImage(file.getBytes())).build());
-		if(data!=null) {
-			return "Success";
+			if(data!=null) {
+				return "Success";
+			}
+			
 		}
+		else if(res.getImage()==null) {
+			
+			storyRepository.updateImage(file,userEmail);
 		}
 		else
 		{
@@ -54,19 +66,60 @@ public class StoryServiceImplementation implements StoryService{
 	}
 	
 	
+	 public String uploadTextStory(String caption,String userEmail) throws StoryAlreadyExistException
+	 {
+		 Story res=storyRepository.findByUserEmail(userEmail);
+		 if(res==null)
+		 {
+			 LocalDateTime currentDateTime = LocalDateTime.now();
+				CustomerSignUp customerData=customerRepo.findByEmail(userEmail);
+			
+				Story data=storyRepository.save(Story.builder()
+					.userName(customerData.getUsername())
+					.name(customerData.getFirstname())
+					.userImage(customerData.getUserImage())
+					.userEmail(userEmail)
+					.userId(customerData.getId())
+					.captions(caption)
+					.timestamp(currentDateTime.toString()).build());
+				if(data!=null) {
+					return "Success";
+				}
+			 
+		 }
+		 else if(res.getCaptions()==null) {
+			 
+			 storyRepository.updateText(caption,userEmail);
+		 }
+		 else
+		 {
+			 throw new StoryAlreadyExistException("Story Already Exist");
+		 }
+		 
+		 return null;
+	 }
+	
+	
 	
 	public Story getStoryByUserEmail(String email){
 		Story stories = storyRepository.findByUserEmail(email);
-        
+		session.setAttribute("test", "Ajay");
+        if(stories!=null)
+        {
 		byte[] data=ImageUtils.decompressImage(stories.getImage());
 		stories.setImage(data);
 			
 		return stories; 
+        }
+        else
+        {
+        	throw new StoryNotFoundException("No Story");
+        }
 	}
 	
 	public List<Story> getAllUserStories(String email) {
 		List<Story> stories =storyRepository.findByUserEmailNotEquals(email);
-		
+		System.out.println("session testing "+session.getAttribute("test"));
 		for (Story story : stories) {
             byte[] compressedImage = story.getImage();
             byte[] decompressedImage = ImageUtils.decompressImage(compressedImage);
